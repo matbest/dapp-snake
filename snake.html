@@ -69,14 +69,40 @@ var contractABI =
 				"type": "function"
 			}
 		];
-var contractAddress = '0xCAf22b02250339642e73e6A3a2d9dC53653a30E8';
+var contractAddress = '0xa208d316a9dbea6885e36a8254ca19f644d51444';
 var Accountaddress = '0x7099b34900d2a33aa124fc5ba2a8a90e5dd5ebe1'
 
 var contractAbi = eth.contract(contractABI);
 var myContract = contractAbi.at(contractAddress);
 myContract.getPoints.call().then(function(a){a,console.log(a[0].words,a,a.toString(),+a.toString(),'Bananas');});
+var el = function(id){ return document.querySelector(id); };
 
 
+
+	function ShowGlobalScore()
+	{
+		myContract.getPoints.call().then(function(a)
+		{
+			el('#IPScore').innerHTML =a[0].words;
+		});
+	}
+	function ShowLocalScore()
+	{
+		el('#lScore').innerHTML =tail -5;
+	}
+
+
+	function SendScore(amount)
+	{
+		myContract.addPoints(amount, {from: web3.eth.accounts[0], gas: 1000000},function(bidError, bidResult){
+		if (bidError) {
+			console.log('Hmm, there was an error' + String(bidError));
+		} else {
+			console.log('Making sending with tx hash: ' + String(bidResult));
+		}
+		});
+
+	}
 
 
 function game()
@@ -101,8 +127,12 @@ function game()
 	ctx.fillStyle="lime";
 	for(var i=0;i<trail.length;i++) {
 		ctx.fillRect(trail[i].x*gs,trail[i].y*gs,gs-2,gs-2);
-		if(trail[i].x==px && trail[i].y==py) {
+		if(trail[i].x==px && trail[i].y==py)
+		{
+			SendScore(tail-5);
 			tail = 5;
+			ShowGlobalScore();
+			ShowLocalScore();
 		}
 	}
 	trail.push({x:px,y:py});
@@ -111,14 +141,19 @@ function game()
 		trail.shift();
 	}
 
-	if(ax==px && ay==py) {
+	if(ax==px && ay==py)
+	{
 		tail++;
 		ax=Math.floor(Math.random()*tc);
 		ay=Math.floor(Math.random()*tc);
+		ShowLocalScore();
 	}
 	ctx.fillStyle="red";
 	ctx.fillRect(ax*gs,ay*gs,gs-2,gs-2);
 }
+
+xv=-1;
+ShowGlobalScore();
 
 function keyPush(evt)
 {
@@ -139,3 +174,19 @@ function keyPush(evt)
 	}
 }
 </script>
+<body class="container" style="padding-top: 3%;">
+
+	<h4>Interplanatary Snake</h4>
+ The Interplatary score is the sum of everyones score<br>
+ the local score is your score (resets and uploads when you die)<br>
+<div class="row">
+	<div class="column">
+	<label>Interplanatary Score</label>
+	<blockquote><p><em id="IPScore">0</em><br /><br /></p></blockquote>
+	</div>
+	<div class="column">
+	<label>Local Score</label>
+	<blockquote><p><span id="lScore">0</span><br /></p></blockquote>
+	</div>
+</div>
+</body>
