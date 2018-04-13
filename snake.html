@@ -23,7 +23,27 @@ tail = 5;
 
 
 			var eth;
+			var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
+			eth = new Eth(web3.currentProvider);
+			console.log("connected to local host");
+/*()
+			a = web3.eth.getAccounts(function(err, accounts)
+			{
+				if (err)
+				{
+					console.log('Hmm, there was an error' + String(err));
+				}
+				else
+				{
+					console.log('OK', accounts, accounts[0]);
+				}
+			}
+		);
 
+*/
+
+
+/*
 			if (0 &&typeof window.web3 !== 'undefined' && typeof window.web3.currentProvider !== 'undefined')
 			{
 				 eth = new Eth(window.web3.currentProvider);
@@ -37,6 +57,7 @@ tail = 5;
 				console.log("connected to local host");
 
 			}
+*/
 
 var contractABI =
 	[
@@ -94,11 +115,11 @@ var el = function(id){ return document.querySelector(id); };
 
 	function SendScore(amount)
 	{
-		myContract.addPoints(amount, {from: web3.eth.accounts[0], gas: 1000000},function(bidError, bidResult){
-		if (bidError) {
-			console.log('Hmm, there was an error' + String(bidError));
+		myContract.addPoints(amount, {from: web3.eth.accounts[0], gas: 1000000},function(err, res){
+		if (err) {
+			console.log('Hmm, there was an error' + String(err));
 		} else {
-			console.log('Making sending with tx hash: ' + String(bidResult));
+			console.log('Making sending with tx hash: ' + String(res));
 		}
 		});
 
@@ -176,16 +197,14 @@ function keyPush(evt)
 </script>
 <body class="container" style="padding-top: 3%;">
 
-	<h4>Interplanatary Snake</h4>
- The Interplatary score is the sum of everyones score<br>
- the local score is your score (resets and uploads when you die)<br>
+
 <div class="row">
 	<div class="column">
-	<label>Interplanatary Score</label>
+	<label>Interplanetary Score (sum of everyones score)</label>
 	<blockquote><p><em id="IPScore">0</em><br /><br /></p></blockquote>
 	</div>
 	<div class="column">
-	<label>Local Score</label>
+	<label>Local Score (resets and uploads when you die)</label>
 	<blockquote><p><span id="lScore">0</span><br /></p></blockquote>
 	</div>
 </div>
