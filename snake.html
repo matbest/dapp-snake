@@ -25,7 +25,7 @@ var web3js;
 window.addEventListener('load', function()
  {
 
-  var ignoreMetamask = true;
+  var ignoreMetamask = false;
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
   if (ignoreMetamask ==false && typeof web3 !== 'undefined')
 	{
@@ -165,7 +165,7 @@ var contractABI =
 		{
 			if (done == true)
 			{
-				done = false;
+				done = true;
 				myContract.addPoints(amount, {from: account, gas: 1000000},function(err, res){
 				if (err)
 				{
