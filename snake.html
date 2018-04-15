@@ -13,7 +13,11 @@ window.onload=function()
 	document.addEventListener("keydown",keyPush);
 	setInterval(game,1000/15);
 
+
 }
+
+var contractAddress = '0xa208d316a9dbea6885e36a8254ca19f644d51444';
+var Accountaddress = '0x7099b34900d2a33aa124fc5ba2a8a90e5dd5ebe1'
 var el = function(id){ return document.querySelector(id); };
 var myContract;
 var web3js;
@@ -28,7 +32,7 @@ window.addEventListener('load', function()
     // Use Mist/MetaMask's provider
 		 console.log('Web3 Detected! ' + web3.currentProvider.constructor.name);
     web3js = new Web3(web3.currentProvider);
-		eth = new Eth(web3js.currentProvider);
+		ethlocal = new Eth(web3js.currentProvider);
   }
 	else
 	{
@@ -36,7 +40,7 @@ window.addEventListener('load', function()
 		console.log("would have been nice to use ", web3.currentProvider);
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-		eth = new Eth(web3js.currentProvider);
+		ethlocal = new Eth(web3js.currentProvider);
   }
 
   // Now you can start your app & access web3 freely:
@@ -48,10 +52,9 @@ window.addEventListener('load', function()
 
 function startApp()
 {
-	var contractAddress = '0x1899744ed978a0588c15ef49d93659050b279618';
-	var Accountaddress = '0x7099b34900d2a33aa124fc5ba2a8a90e5dd5ebe1'
-	var eth = new Eth(web3js.currentProvider);
-	var contractAbi = eth.contract(contractABI);
+
+	var ethlocal = new Eth(web3js.currentProvider);
+	var contractAbi = ethlocal.contract(contractABI);
 	 myContract = contractAbi.at(contractAddress);
 	myContract.getPoints.call().then(function(a){a,console.log(a[0].words,a,a.toString(),+a.toString(),'Bananas');});
 
@@ -144,21 +147,59 @@ var contractABI =
 		el('#lScore').innerHTML =tail -5;
 	}
 
-
+	var count =0;
+	var done = true;
 	function SendScore(amount)
 	{
+		console.log(count++);
+		console.log("sending transaction from account", Accountaddress);
+		var contractAbi = ethlocal.contract(contractABI);
+		var myContract = contractAbi.at(contractAddress);
+
 		var account = web3.eth.accounts[0];
-	//	 account = '0x7099b34900d2a33aa124fc5ba2a8a90e5dd5ebe1';
-		myContract.addPoints(amount, {from: account, gas: 1000000},function(err, res){
-		if (err)
+		console.log("web3.eth = ", account, " original = ", Accountaddress)
+		account = Accountaddress;
+
+//DONT SEND TWICE ??
+		if (1)
 		{
-			console.log('Hmm, there was an error' + String(err));
+			if (done == true)
+			{
+				done = false;
+				myContract.addPoints(amount, {from: account, gas: 1000000},function(err, res){
+				if (err)
+				{
+					done = true;
+					console.log('Hmm, there was an error' + String(err));
+				}
+				else
+				{
+					done = true;
+					console.log('Making sending with tx hash: ' + String(res));
+				}
+				});
+			}
+			else
+			{
+					console.log("not done yet");
+			}
 		}
 		else
 		{
-			console.log('Making sending with tx hash: ' + String(res));
+
+			// suppose you want to call a function named myFunction of myContract
+			//var ap = myContract.addPoints.getData(amount);
+			//finally paas this data parameter to send Transaction
+			web3js.eth.sendTransaction({from: account, to: addPoints, data: "1" }, function(err, transactionHash) {
+				if (!err)
+			  	console.log(transactionHash); // "0x7f9fade1c0d57a7af66ab4ead7c2eb7b11a91385"
+				else
+						console.log(err);
+				});
+
+			tx = ethlocal.sendTransaction({to:account, from:Accountaddress, data: amount});
 		}
-		});
+	//	console.log("Transaction was ", tx);
 	}
 
 // The actual game part:
