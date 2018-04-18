@@ -1,0 +1,143 @@
+<html>
+<head>
+<script type="text/javascript" src="web3.js"></script>
+<script type="text/javascript" src="ethjs.js"></script>
+<script type="text/javascript">
+
+var contractABI =
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_updatedIpfsAddress",
+				"type": "string"
+			}
+		],
+		"name": "setAddress",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getAddress",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "myIpfsString",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+function GetTargetAddressFromEthereum()
+{
+  var ethlocal = new Eth(web3js.currentProvider);
+  var contractAbi = ethlocal.contract(contractABI);
+  myContract = contractAbi.at(contractAddress);
+
+  var add = myContract.getAddress.call().then(function(a){a,console.log(a[0].words,a,a.toString(),+a.toString(),'Bananas');});
+  return add;
+}
+
+window.addEventListener('load', function()
+ {
+   var contractAddress = '0x6a09c3511bc709f60b7f87723e66600e453470c6';
+   //var AccountaddressBackup = '0x7099b34900d2a33aa124fc5ba2a8a90e5dd5ebe1'
+   var el = function(id){ return document.querySelector(id); };
+   var newdestination = getAddress();
+   console.log(newdestination);
+
+  // var destination = document.documentElement.getAttribute(newdestination);
+   window.location.href = newdestination ;
+
+ }
+
+
+
+</script>
+
+
+<title>you will be redirected</title>
+
+</head>
+<body>
+Please ensure you are on the Ropsten network ! Thankyou
+<br>
+
+<p> If your browser doesn't automatically go there within a few seconds,
+you may want to go to <a href="http://example.com/">the destination</a> manually.
+</p>
+</body>
+</html>
