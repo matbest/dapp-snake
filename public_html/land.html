@@ -106,6 +106,7 @@ body {
 //var canvas = $('#GameBoardCanvas');
 
 var canvas = document.getElementById("GameBoardCanvas");
+var el = function(id){ return document.querySelector(id); };
 
 //The game board 1 = walls, 0 = free space, and -1 = the goal
 var board = [
@@ -127,7 +128,8 @@ var player = {
 };
 
 //Draw the game board
-function draw(){
+function draw()
+{
     var width = canvas.width;
     var blockSize = width/board.length;
     var ctx = canvas.getContext('2d');
@@ -135,8 +137,10 @@ function draw(){
     ctx.clearRect(0, 0, width, width);
     ctx.fillStyle="white";
     //Loop through the board array drawing the walls and the goal
-    for(var y = 0; y < board.length; y++){
-        for(var x = 0; x < board[y].length; x++){
+    for(var y = 0; y < board.length; y++)
+    {
+        for(var x = 0; x < board[y].length; x++)
+        {
             //Draw a wall
             if(board[y][x] === 1){
                 ctx.fillRect(x*blockSize, y*blockSize, blockSize, blockSize);
@@ -159,6 +163,7 @@ function draw(){
     var half = blockSize/2;
     ctx.fillStyle = "blue";
     ctx.arc(player.x*blockSize+half, player.y*blockSize+half, half, 0, 2*Math.PI);
+    	el('#R_X').innerHTML =player.x;
     ctx.fill();
 }
 
@@ -199,7 +204,7 @@ draw();
 </div>
 <div class="divTableBody">
 <div class="divTableRow">
-<div class="divTableCell">Region</div><div class="divTableCell">0</div><div class="divTableCell">0</div><div class="divTableCell"><button type="button">Buy</button><button type="button">Save</button></div></div>
+<div class="divTableCell">Region</div><div class="divTableCell"  id="R_X">0</div><div class="divTableCell">0</div><div class="divTableCell"><button type="button">Buy</button><button type="button">Save</button></div></div>
 <div class="divTableRow">
 <div class="divTableCell">Local</div><div class="divTableCell">0</div><div class="divTableCell">0</div><div class="divTableCell"><button type="button">Set</button></div></div>
 </div>
