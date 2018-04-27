@@ -102,17 +102,27 @@ var contractABI =
 ];
 
 var el = function(id){ return document.querySelector(id); };
+
+
+
+/**
+ * single class to wrap all the ethereum interaction stuff
+ */
 class EthereumIO
 {
 
+    /**
+     * 		address is built in, so build the contract object. Perhaps should put the ABI in here.
+     */
     constructor()
     {
 
       var contractAddress = '0x6a09c3511bc709f60b7f87723e66600e453470c6';
       var web3js;
-      var ignoreMetamask = false;
-      // Checking if Web3 has been injected by the browser (Mist/MetaMask)
       var ethlocal
+
+			// Work around for connecting to Ganache without metamask which doesnt like ganache.
+			var ignoreMetamask = false;
 
     	if (ignoreMetamask == false && typeof web3 !== 'undefined')
     	{
@@ -131,10 +141,14 @@ class EthereumIO
     	}
 
 
-      var contractAbi = ethlocal.contract(contractABI);
-        this.myContract = contractAbi.at(contractAddress);
+			var contractAbi = ethlocal.contract(contractABI);
+			this.myContract = contractAbi.at(contractAddress);
     }
 
+
+   /**
+    * Retrieve the IPFS address currently stored
+    */
    GetCurrentAddressinto()
     {
       var add = this.myContract.getAddress.call().then(function(a)
@@ -148,6 +162,10 @@ class EthereumIO
       return add;
     }
 
+
+     /**
+      * Change the IPFS address to point at somewhere else.
+      */
      SetNewAddress( newAddress )
     {
 	     var activeAccount = web3.eth.accounts[0];
@@ -156,7 +174,7 @@ class EthereumIO
 
 
        var TxObject = {from: activeAccount, gas: 1000000};
-            
+
       this.myContract.setAddress(newAddress, TxObject,                            function(error, result){
       if (error) {
       console.log(error);
@@ -170,26 +188,28 @@ class EthereumIO
      ShowNetwork()
    {
 
-   //  var network  = GetNetworkVersion();
-       //var target = GetTargetAddressFromEthereum();
 
    }
 }
 
 
 
+/**
+ * build the ethereum object once the page has l;oaded
+ */
 window.addEventListener('load', function()
  {
    var ETHIO = new EthereumIO();
-  // var el = function(id){ return document.querySelector(id); };
    var newdestination = ETHIO.GetCurrentAddressinto();
    console.log(newdestination);
-
-  // var destination = document.documentElement.getAttribute(newdestination);
-  // window.location.href = destination ;
-  //ShowNetwork();
  })
 
+
+/**
+ * SetAddress - Set the new ipfs address of the game
+ *
+ * @return {type}  description
+ */
 function SetAddress()
 {
    var ETHIO = new EthereumIO();
