@@ -7,6 +7,14 @@
 
 <script>
 
+/**
+ * once loaded, start the game loop and send the keypresses to our function
+ *
+ * @param  {type} argA description
+ * @param  {type} argB description
+ * @param  {type} argC description
+ * @return {type}      description
+ */
 window.onload=function()
  {
 	canv=document.getElementById("gc");
@@ -16,18 +24,25 @@ window.onload=function()
 	console.log("Snake Loaded");
 }
 
+// some basic definitions
 var contractAddress = '0xa208d316a9dbea6885e36a8254ca19f644d51444';
-//var AccountaddressBackup = '0x7099b34900d2a33aa124fc5ba2a8a90e5dd5ebe1'
 var el = function(id){ return document.querySelector(id); };
 var myContract;
 var web3js;
+
+// a debugging bool thing to ignore if metamask is in place, and connect to localhost directly.
 var ignoreMetamask = false;
 
+/**
+ * When the page has loaded, connect to the web3 provider (Metamask at the moment)
+
+ */
 window.addEventListener('load', function()
  {
 
 
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+	//Ignore metamask if flag is set - metamask and ganache do not play nice. but you can talk to ganace directly this way.
   if (ignoreMetamask == false && typeof web3 !== 'undefined')
 	{
     // Use Mist/MetaMask's provider
@@ -48,6 +63,12 @@ window.addEventListener('load', function()
 
 })
 
+/**
+ * Get the address - used to handle if metamask is acting up and not working (often)
+ *
+
+ * @return {not sure}      account address on Ethereum
+ */
 function GetAccountAddress()
 {
 	if (ignoreMetamask == true)
@@ -60,19 +81,37 @@ function GetAccountAddress()
 	}
 }
 
+/**
+ * Start the game
+ *
+
+ */
+
 function startApp()
 {
 
+get the contract that contains the score.
 	var ethlocal = new Eth(web3js.currentProvider);
 	var contractAbi = ethlocal.contract(contractABI);
 	myContract = contractAbi.at(contractAddress);
+
+	// some debugging output to check that things are happening
 	myContract.getPoints.call().then(function(a){a,console.log(a[0].words,a,a.toString(),+a.toString(),'Bananas');});
 
+  // show on the game page which network we are on - Needs to be Rosten at the moment.
 	ShowNetwork();
+
+	// Show on the game page what the global score is (is the total of everyone that has submitted)
 	ShowGlobalScore();
+
+	// Shopw on the game page your personal score so far (resets to zero when you die)
 	ShowLocalScore();
 }
-
+/**
+ * find out what network we are connected to
+ *
+ * @return {string}      The name of the network currently attached to this web page via Web3
+ */
 function GetNetworkVersion()
 {
 	var network = web3.version.network;
@@ -136,13 +175,19 @@ var contractABI =
 			}
 		];
 
+		/**
+		 * get the network version and stuff it on screen
 
+		 */
 	function ShowNetwork()
 	{
 		var network  = GetNetworkVersion();
 		el('#network').innerHTML = network;
 	}
 
+	/**
+	 * Get the global score from the contract, and when it returns, show it onscreen
+	 */
 	function ShowGlobalScore()
 	{
 		myContract.getPoints.call().then(function(a)
@@ -150,13 +195,26 @@ var contractABI =
 			el('#IPScore').innerHTML =a[0].words;
 		});
 	}
+
+	/**
+ * Show the current score
+ */
 	function ShowLocalScore()
 	{
 		el('#lScore').innerHTML =tail -5;
 	}
 
+// some loop variables I dont know where to put right now.
 	var count =0;
 	var done = true;
+
+
+	/**
+ * functionComment - send the current score to the contract
+ *
+ * @param  {int} amount score to be added
+
+ */
 	function SendScore(amount)
 	{
 		var activeAccount = GetAccountAddress();
@@ -169,7 +227,7 @@ var contractABI =
 		console.log("web3.eth = ", account, " original = ", activeAccount)
 
 
-		//DONT SEND TWICE
+		//DONT SEND TWICE (OR MORE)
 
 		if (done == true)
 		{
@@ -191,8 +249,6 @@ var contractABI =
 		{
 				console.log("not done yet");
 		}
-
-
 	}
 
 // The actual game part:
@@ -203,7 +259,9 @@ var contractABI =
 	trail=[];
 	tail = 5;
 
-
+	/**
+ * functionComment - The actual game loop. This is the smallest game I could find in JS.
+ */
 function game()
 {
 	px+=xv;
@@ -253,7 +311,9 @@ function game()
 
 xv=-1;
 
-
+/**
+* functionComment - detect Key Presses and move the location.
+*/
 function keyPush(evt)
 {
 	switch(evt.keyCode)
